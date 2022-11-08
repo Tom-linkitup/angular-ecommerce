@@ -4,11 +4,7 @@
       <div class="row">
         <div *ngFor="let tempProduct of products" class="col-md-3">
           <div class="product-box">
-            <img
-              class="img-responsive"
-              src="{{ tempProduct.imageUrl }}"
-              alt="img"
-            />
+            <img class="img-responsive" src="{{ tempProduct.imageUrl }}" alt="img" />
             <h1>{{ tempProduct.name }}</h1>
             <div class="price">
               {{ tempProduct.unitPrice | currency: "USD" }}
