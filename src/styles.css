@@ -740,6 +740,10 @@ table.table.table-bordered th {
 .detail-section {
   margin-top: 60px;
 }
+
+.detail-img {
+  width: 30%;
+}
 /**/
 
 /* 
@@ -753,6 +757,10 @@ table.table.table-bordered th {
   background-color: #0da8e4 !important;
   border-color: #0da8e4 !important;
 }
+a {
+  text-decoration: none !important;
+}
+
 a.primary-btn {
   background: #05143f;
   padding: 7px 20px;
