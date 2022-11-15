@@ -25,19 +25,29 @@ export class ProductService {
     // need to build search Url base on category id
     const searchUrl = `${this.baseUrl}/search/findByCategoryId?id=${theCategoryId}`
                     + `&page=${thePage}&size=${thePageSize}`;
+
     return this.httpClient.get<GetResponseProducts>(searchUrl);
   }
 
-  getProductList(theCategoryId: number): Observable<Product[]> {
-    // need to build search Url base on category id
-    const searchUrl = `${this.baseUrl}/search/findByCategoryId?id=${theCategoryId}`;
-    return this.getProducts(searchUrl);
-  }
+  // getProductList(theCategoryId: number): Observable<Product[]> {
+  //   // need to build search Url base on category id
+  //   const searchUrl = `${this.baseUrl}/search/findByCategoryId?id=${theCategoryId}`;
+  //   return this.getProducts(searchUrl);
+  // }
 
-  searchProducts(theKeyword: string): Observable<Product[]> {
-    // need to build search Url base on keyword
-    const searchUrl = `${this.baseUrl}/search/findByNameContaining?name=${theKeyword}`;
-    return this.getProducts(searchUrl);
+  // searchProducts(theKeyword: string): Observable<Product[]> {
+  //   // need to build search Url base on keyword
+  //   const searchUrl = `${this.baseUrl}/search/findByNameContaining?name=${theKeyword}`;
+  //   return this.getProducts(searchUrl);
+  // }
+
+  searchProductsPaginate(thePage: number, 
+    thePageSize: number, theKeyword: string): Observable<GetResponseProducts> {
+    // need to build search Url base on category id
+    const searchUrl = `${this.baseUrl}/search/findByNameContaining?name=${theKeyword}`
+    + `&page=${thePage}&size=${thePageSize}`;
+
+    return this.httpClient.get<GetResponseProducts>(searchUrl);
   }
 
   getProductCategories(): Observable<ProductCategory[]> {
