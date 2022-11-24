@@ -68,7 +68,8 @@ export class ProductListComponent implements OnInit {
       this.thePageNumber = 1;
     }
     this.previousCategoryId = this.currentCategoryId;
-    this.productService.getProductListPaginate(this.thePageNumber - 1, this.thePageSize, this.currentCategoryId).subscribe(this.processResult())
+    this.productService.getProductListPaginate(this.thePageNumber - 1, 
+      this.thePageSize, this.currentCategoryId).subscribe(this.processResult())
   }
 
   updatePageSize(pageSize: String) {
@@ -87,8 +88,6 @@ export class ProductListComponent implements OnInit {
   }
 
   addToCart(theProduct: Product) {
-    console.log(`${theProduct.name} ${theProduct.unitPrice}`)
-
     const theCartItem = new CartItem(theProduct);
     this.cartService.addCartItem(theCartItem);
   }
