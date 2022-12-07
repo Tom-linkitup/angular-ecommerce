@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Country } from '../common/country';
+import { State } from '../common/state';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,12 @@ export class Luv2ShopFormServiceService {
   private statesUrl = "http://localhost:8080/api/states";
   
   constructor(private httpClient: HttpClient) { }
+
+  getStates(theCountryCode: string): Observable<State[]> {
+    return this.httpClient.get<GetResponseStates>(`${this.statesUrl}/search/findByCountryCode?code=${theCountryCode}`).pipe(
+      map(response => response._embedded.states)
+    );
+  }
 
   getCountries(): Observable<Country[]> {
     return this.httpClient.get<GetResponseCountries>(this.countriesUrl).pipe(
@@ -45,5 +52,11 @@ export class Luv2ShopFormServiceService {
 interface GetResponseCountries {
   _embedded: {
     countries: Country[];
+  }
+}
+
+interface GetResponseStates {
+  _embedded: {
+    states: State[];
   }
 }
