@@ -30,13 +30,13 @@ export class CheckoutComponent implements OnInit {
     // populate countries
     this.luv2ShopService.getCountries().subscribe(
       data => this.countries = data
+
     );
     // populate credit card months
     const startMonth = new Date().getMonth() + 1;
     this.luv2ShopService.getCreditCardMonths(startMonth).subscribe(
       data => this.creditCardMonths = data
     );
-
     // populate credit card years
     this.luv2ShopService.getCreditCardYears().subscribe(
       data => this.creditCardYears = data
@@ -107,17 +107,21 @@ export class CheckoutComponent implements OnInit {
         } else {
           this.billingAddressStates = data
         }
+        // select the first data by default
+        formGroup.get('state').setValue(data[0]);
       }
     )
   }
 
   copyShippingAddressToBillingAddress(event) {
-    // if (event.target.checked) {
-    //   this.checkoutFormGroup.controls.billingAddress.setValue(this.checkoutFormGroup.controls.shippingAddress.value);
-    // } else {
-    //   this.checkoutFormGroup.controls.billingAddress.reset();
-    // }
-
+    if (event.target.checked) {
+      // get shipping address state
+      this.checkoutFormGroup.controls['billingAddress'].setValue(this.checkoutFormGroup.controls['shippingAddress'].value);
+      this.billingAddressStates = this.shippingAddressStates;
+    } else {
+      this.checkoutFormGroup.controls['billingAddress'].reset();
+      this.billingAddressStates = [];
+    }
   }
 
   onSubmit() {
