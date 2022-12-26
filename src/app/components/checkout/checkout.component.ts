@@ -28,6 +28,7 @@ export class CheckoutComponent implements OnInit {
               private luv2ShopService: Luv2ShopFormServiceService) { }
 
   ngOnInit(): void {
+    this.reviewCartDetails();
     // populate countries
     this.luv2ShopService.getCountries().subscribe(
       data => this.countries = data
@@ -86,6 +87,15 @@ export class CheckoutComponent implements OnInit {
         expirationYear: ['']
       })
     })
+  }
+  reviewCartDetails() {
+    this.cartService.totalQuantity.subscribe(
+      totalQuantity => this.totalQuantity = totalQuantity
+    );
+
+    this.cartService.totalPrice.subscribe(
+      totalPrice => this.totalPrice = totalPrice
+    );
   }
 
   handleMonthAndYears() {
