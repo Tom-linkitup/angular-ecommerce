@@ -49,7 +49,7 @@
                                     <div *ngIf="email.errors.required">
                                         Email is required.
                                     </div>
-                                    <div *ngIf="email.errors.pattern">
+                                    <div *ngIf="email?.errors?.pattern">
                                         Email pattern is not valid.
                                     </div>
                                 </div>
