@@ -706,6 +706,7 @@ table.table.table-bordered {
 .table-bordered td,
 .table-bordered th {
   border: 1px solid #dee2e6;
+  padding: 7px;
 }
 table.table.table-bordered th {
   background: #0da8e4;
@@ -756,6 +757,11 @@ table.table.table-bordered th {
   color: #fff;
   background-color: #0da8e4 !important;
   border-color: #0da8e4 !important;
+}
+.btn-success {
+  color: #fff;
+  background-color: #5cb85c !important;
+  border-color: #5cb85c !important;
 }
 a {
   text-decoration: none !important;
