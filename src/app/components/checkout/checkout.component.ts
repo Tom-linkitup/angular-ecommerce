@@ -4,12 +4,14 @@ import { Router } from '@angular/router';
 import { Country } from 'src/app/common/country';
 import { Order } from 'src/app/common/order';
 import { OrderItem } from 'src/app/common/order-item';
+import { PaymentInfo } from 'src/app/common/payment-info';
 import { Purchase } from 'src/app/common/purchase';
 import { State } from 'src/app/common/state';
 import { CartService } from 'src/app/services/cart.service';
 import { CheckoutService } from 'src/app/services/checkout.service';
 import { Luv2ShopFormServiceService } from 'src/app/services/luv2-shop-form-service.service';
 import { Luv2ShopValidators } from 'src/app/validators/luv2-shop-validators';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-checkout',
@@ -17,7 +19,7 @@ import { Luv2ShopValidators } from 'src/app/validators/luv2-shop-validators';
   styleUrls: ['./checkout.component.css']
 })
 export class CheckoutComponent implements OnInit {
-
+  
   checkoutFormGroup: FormGroup;
   totalPrice: number = 0.00;
   totalQuantity: number = 0;
@@ -28,6 +30,13 @@ export class CheckoutComponent implements OnInit {
   shippingAddressStates: State[] = [];
   billingAddressStates: State[] = [];
   storage: Storage = sessionStorage;
+  isCheckoutBtnDisabled: boolean = false;
+
+  // initialize Stripe API
+  stripe = Stripe(environment.stripePublishableKey);
+  paymentInfo: PaymentInfo = new PaymentInfo();
+  cardElement: any;
+  displayError: any = '';
 
   constructor(private formBuilder: FormBuilder, 
               private cartService: CartService, 
@@ -36,21 +45,15 @@ export class CheckoutComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit(): void {
+    // set stripe payment form
+    this.setupStripePaymentForm();
+
     this.reviewCartDetails();
     // populate countries
     this.luv2ShopService.getCountries().subscribe(
       data => this.countries = data
 
     );
-    // populate credit card months
-    const startMonth = new Date().getMonth() + 1;
-    this.luv2ShopService.getCreditCardMonths(startMonth).subscribe(
-      data => this.creditCardMonths = data
-    );
-    // populate credit card years
-    this.luv2ShopService.getCreditCardYears().subscribe(
-      data => this.creditCardYears = data
-    )
 
     this.cartService.totalPrice.subscribe(
       data => this.totalPrice = data
@@ -88,17 +91,25 @@ export class CheckoutComponent implements OnInit {
         zipCode: new FormControl('', [Validators.required, Validators.minLength(2), 
                                       Luv2ShopValidators.notOnlyWhitespace])
       }),
-      creditCard: this.formBuilder.group({
-        cardType: new FormControl('', [Validators.required]),
-        nameOnCard:  new FormControl('', [Validators.required, Validators.minLength(2), 
-                                          Luv2ShopValidators.notOnlyWhitespace]),
-        cardNumber: new FormControl('', [Validators.required, Validators.pattern('[0-9]{16}')]),
-        securityCode: new FormControl('', [Validators.required, Validators.pattern('[0-9]{3}')]),
-        expirationMonth: [''],
-        expirationYear: ['']
-      })
+      creditCard: this.formBuilder.group({})
     })
   }
+  setupStripePaymentForm() {
+    var elements = this.stripe.elements();
+    // create card element
+    this.cardElement = elements.create('card', { hidePostalCode: true });
+    this.cardElement.mount('#card-element');
+    this.cardElement.on('change', (event) => {
+      // handle to card error
+      this.displayError = document.getElementById('#card-errors');
+      if (event.complete) {
+        this.displayError = ''
+      } else if (event.error) {
+        this.displayError.textContent = event.error.message;
+      }
+    })
+  }
+
   reviewCartDetails() {
     this.cartService.totalQuantity.subscribe(
       totalQuantity => this.totalQuantity = totalQuantity
@@ -209,18 +220,48 @@ export class CheckoutComponent implements OnInit {
     purchase.order = order;
     purchase.orderItems = orderItems;
 
-    this.checkoutService.placeOrder(purchase).subscribe(
-      {
-        next: response => {
-          alert(`Your order has been received.\nOrder Tracking number: ${response.orderTrackingNumber}`);
-          this.resetCart();
-        },
-        error: err => {
-          alert(`Error: ${err.message}`);
-        }
-      }
-    )
+    // payment info
+    this.paymentInfo.amount = Math.round(this.totalPrice * 100);
+    this.paymentInfo.currency = 'USD';
+    this.paymentInfo.receiptEmail = purchase.customer.email;
 
+    // disable the checkout button
+    this.isCheckoutBtnDisabled = true;
+
+    // post to backend
+    this.checkoutService.createPaymentIntent(this.paymentInfo).subscribe(
+      (paymentIntentResponse) => {
+        this.stripe.confirmCardPayment(paymentIntentResponse.client_secret, 
+        {
+          payment_method: {
+            card: this.cardElement,
+            billing_details: {
+              email: purchase.customer.email,
+              name: `${purchase.customer.firstName} ${purchase.customer.lastName}`
+            }
+          }
+        }, {handleActions: false})
+        .then((result: any) => {
+          if (result.error) {
+            alert(`There was an error: ${result.error.message}`);
+            this.isCheckoutBtnDisabled = false;
+          } else {
+            this.checkoutService.placeOrder(purchase).subscribe(
+              {
+                next: response => {
+                  alert(`Your order has been received.\nOrder Tracking number: ${response.orderTrackingNumber}`);
+                  this.resetCart();
+                  this.isCheckoutBtnDisabled = false;
+                },
+                error: err => {
+                  alert(`Error: ${err.message}`);
+                  this.isCheckoutBtnDisabled = false;
+                }
+              }
+            )
+          }
+        })
+      })
   }
   resetCart() {
     this.cartService.cartItems = [];

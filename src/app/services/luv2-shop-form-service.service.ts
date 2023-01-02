@@ -5,14 +5,15 @@ import { map } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { Country } from '../common/country';
 import { State } from '../common/state';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class Luv2ShopFormServiceService {
 
-  private countriesUrl = "http://localhost:8080/api/countries";
-  private statesUrl = "http://localhost:8080/api/states";
+  private countriesUrl = `${environment.lu2shopApiUrl}/countries`;
+  private statesUrl = `${environment.lu2shopApiUrl}/states`;
   
   constructor(private httpClient: HttpClient) { }
 

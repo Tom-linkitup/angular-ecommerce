@@ -273,7 +273,11 @@
                 <!-- Credit Card -->
                 <div formGroupName="creditCard" class="form-area">
                     <h3>Credit Card</h3>
-                    <div class="row">
+                    <div id="card-element">
+
+                    </div>
+                    <div id="card-errors" class="displayError.textContent !== '': 'alert alert danger mt-1'"></div>
+                    <!-- <div class="row">
                         <div class="col-md-2"> <label>Card Type</label></div>
                         <div class="col-md-9">
                             <div class="input-space">
@@ -281,31 +285,26 @@
                                     <option>Visa</option>
                                     <option>Mastercard</option>
                                 </select>
-
                                 <div *ngIf="creditCardType.invalid && (creditCardType.dirty || creditCardType.touched)"
                                     class="alert alert-danger mt-1">
                                     <div *ngIf="creditCardType.errors.required">
                                         Credit card type is required
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-2"> <label>Name on Card</label></div>
                         <div class="col-md-9">
                             <div class="input-space">
                                 <input formControlName="nameOnCard" type="text">
-
                                 <div *ngIf="creditCardNameOnCard.invalid && (creditCardNameOnCard.dirty || creditCardNameOnCard.touched)"
                                     class="alert alert-danger mt-1">
                                     <div
                                         *ngIf="creditCardNameOnCard.errors.required || creditCardNameOnCard.errors.notOnlyWhitespace">
                                         Name is required
                                     </div>
-
                                     <div *ngIf="creditCardNameOnCard.errors.minlength">
                                         Name must be at least 2 characters long
                                     </div>
@@ -313,13 +312,11 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-2"> <label>Card Number</label></div>
                         <div class="col-md-9">
                             <div class="input-space">
                                 <input formControlName="cardNumber" type="text">
-
                                 <div *ngIf="creditCardNumber.invalid && (creditCardNumber.dirty || creditCardNumber.touched)"
                                     class="alert alert-danger mt-1">
                                     <div *ngIf="creditCardNumber.errors.required">
@@ -332,13 +329,11 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-2"> <label>Security Code</label></div>
                         <div class="col-md-9">
                             <div class="input-space">
                                 <input formControlName="securityCode" type="text">
-
                                 <div *ngIf="creditCardSecurityCode.invalid && (creditCardSecurityCode.dirty || creditCardSecurityCode.touched)"
                                     class="alert alert-danger mt-1">
                                     <div *ngIf="creditCardSecurityCode.errors.required">
@@ -351,7 +346,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-2"> <label>Expiration Month</label></div>
                         <div class="col-md-9">
@@ -364,7 +358,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-2"> <label>Expiration Year</label></div>
                         <div class="col-md-9">
@@ -376,7 +369,7 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- Order details -->
                 <div class="form-area">
@@ -387,7 +380,7 @@
                 </div>
                 <!-- submit button-->
                 <div class="text-center">
-                    <button type="submit" class="btn btn-info">Purchase</button>
+                    <button type="submit" class="btn btn-info" [disabled]="isCheckoutBtnDisabled">Purchase</button>
                 </div>
             </form>
         </div>
